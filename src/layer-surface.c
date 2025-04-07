@@ -123,6 +123,18 @@ static void layer_surface_send_set_anchor(struct layer_surface_t* self) {
     }
 }
 
+static void layer_surface_send_set_exclusive_edge(struct layer_surface_t* self) {
+    if (self->layer_surface) {
+        zwlr_layer_surface_v1_set_exclusive_edge(
+            self->layer_surface,
+            (self->anchored.left && self->exclusive.left   ? ZWLR_LAYER_SURFACE_V1_ANCHOR_LEFT   : 0) |
+            (self->anchored.right && self->exclusive.right ? ZWLR_LAYER_SURFACE_V1_ANCHOR_RIGHT  : 0) |
+            (self->anchored.top && self->exclusive.top ? ZWLR_LAYER_SURFACE_V1_ANCHOR_TOP    : 0) |
+            (self->anchored.bottom && self->exclusive.bottom ? ZWLR_LAYER_SURFACE_V1_ANCHOR_BOTTOM : 0)
+        );
+    }
+}
+
 static void layer_surface_send_set_margin(struct layer_surface_t* self) {
     if (self->layer_surface) {
         zwlr_layer_surface_v1_set_margin(
@@ -176,6 +188,7 @@ static void layer_surface_create_surface_object(struct layer_surface_t* self, st
     layer_surface_send_set_keyboard_interactivity(self);
     zwlr_layer_surface_v1_set_exclusive_zone(self->layer_surface, self->exclusive_zone);
     layer_surface_send_set_anchor(self);
+    layer_surface_send_set_exclusive_edge(self);
     layer_surface_send_set_margin(self);
     layer_surface_send_set_size(self);
 }
@@ -183,8 +196,8 @@ static void layer_surface_create_surface_object(struct layer_surface_t* self, st
 static void layer_surface_update_auto_exclusive_zone(struct layer_surface_t* self) {
     if (!self->auto_exclusive_zone) return;
 
-    bool horiz = (self->anchored.left == self->anchored.right);
-    bool vert  = (self->anchored.top  == self->anchored.bottom);
+    bool horiz = (self->anchored.left == self->anchored.right) || self->exclusive.top || self->exclusive.bottom;
+    bool vert  = (self->anchored.top  == self->anchored.bottom) || self->exclusive.left || self->exclusive.right;
     int new_exclusive_zone = -1;
 
     if (horiz && !vert) {
@@ -328,6 +341,31 @@ void layer_surface_set_anchor(struct layer_surface_t* self, struct geom_edges_t 
         self->anchored = anchors;
         if (self->layer_surface) {
             layer_surface_send_set_anchor(self);
+            layer_surface_send_set_exclusive_edge(self);
+            layer_surface_send_set_size(self);
+            layer_surface_configure_xdg_surface(self, 0, false);
+            layer_surface_update_auto_exclusive_zone(self);
+            layer_surface_needs_commit(self);
+        }
+    }
+}
+
+void layer_surface_set_exclusive_edge(struct layer_surface_t* self, struct geom_edges_t anchors) {
+    // Normalize booleans or else strange things can happen
+    anchors.left   = anchors.left   ? 1 : 0;
+    anchors.right  = anchors.right  ? 1 : 0;
+    anchors.top    = anchors.top    ? 1 : 0;
+    anchors.bottom = anchors.bottom ? 1 : 0;
+
+    if (self->exclusive.left   != anchors.left ||
+        self->exclusive.right  != anchors.right ||
+        self->exclusive.top    != anchors.top   ||
+        self->exclusive.bottom != anchors.bottom
+    ) {
+        self->exclusive = anchors;
+        if (self->layer_surface) {
+            layer_surface_send_set_anchor(self);
+            layer_surface_send_set_exclusive_edge(self);
             layer_surface_send_set_size(self);
             layer_surface_configure_xdg_surface(self, 0, false);
             layer_surface_update_auto_exclusive_zone(self);

@@ -30,6 +30,7 @@ struct layer_surface_t {
 
     // Can be set at any time
     struct geom_edges_t anchored; // Logically booleans, the edges of the output this layer surface is currently anchored to
+    struct geom_edges_t exclusive; // Logically booleans, the edges of the output this layer surface is currently exclusive to
     struct geom_edges_t margin_size; // The gap between each edge of the output and this layer surface (only applicable for anchored edges)
     int exclusive_zone; // The current exclusive zone(set either explicitly or automatically)
     bool auto_exclusive_zone; // If to automatically change the exclusive zone to match the window size
@@ -80,6 +81,7 @@ void layer_surface_set_anchor(struct layer_surface_t* self, struct geom_edges_t 
 void layer_surface_set_margin(struct layer_surface_t* self, struct geom_edges_t margins);
 void layer_surface_set_exclusive_zone(struct layer_surface_t* self, int exclusive_zone);
 void layer_surface_auto_exclusive_zone_enable(struct layer_surface_t* self);
+void layer_surface_set_exclusive_edge(struct layer_surface_t* self, struct geom_edges_t anchors);
 void layer_surface_set_keyboard_mode(
     struct layer_surface_t* self,
     enum zwlr_layer_surface_v1_keyboard_interactivity mode

@@ -368,6 +368,42 @@ gboolean gtk_layer_auto_exclusive_zone_is_enabled(GtkWindow* window) {
 }
 
 GTK4_LAYER_SHELL_EXPORT
+void gtk_layer_set_exclusive_edge(GtkWindow* window, GtkLayerShellEdge edge) {
+    struct gtk_layer_surface_t* layer_surface = gtk_window_get_layer_surface_or_warn(window);
+    if (!layer_surface) return;
+    struct geom_edges_t exclusive = layer_surface->super.exclusive;
+    switch (edge) {
+    case GTK_LAYER_SHELL_EDGE_LEFT:
+      exclusive.left = true;
+      exclusive.right = false;
+      exclusive.top = false;
+      exclusive.bottom = false;
+      break;
+    case GTK_LAYER_SHELL_EDGE_RIGHT:
+      exclusive.left = false;
+      exclusive.right = true;
+      exclusive.top = false;
+      exclusive.bottom = false;
+      break;
+    case GTK_LAYER_SHELL_EDGE_TOP:
+      exclusive.left = false;
+      exclusive.right = false;
+      exclusive.top = true;
+      exclusive.bottom = false;
+      break;
+    case GTK_LAYER_SHELL_EDGE_BOTTOM:
+      exclusive.left = false;
+      exclusive.right = false;
+      exclusive.top = false;
+      exclusive.bottom = true;
+      break;
+    default:
+      g_warning("Invalid GtkLayerShellEdge %d", edge);
+    }
+    layer_surface_set_exclusive_edge(&layer_surface->super, exclusive);
+}
+
+GTK4_LAYER_SHELL_EXPORT
 void gtk_layer_set_keyboard_mode(GtkWindow* window, GtkLayerShellKeyboardMode mode) {
     g_return_if_fail(mode >= 0 && mode < GTK_LAYER_SHELL_KEYBOARD_MODE_ENTRY_NUMBER);
     struct gtk_layer_surface_t* layer_surface = gtk_window_get_layer_surface_or_warn(window);

@@ -430,7 +430,7 @@ void init() {
     default_global_create(display, &wl_compositor_interface, 4);
     default_global_create(display, &wl_subcompositor_interface, 1);
     default_global_create(display, &xdg_wm_base_interface, 2);
-    default_global_create(display, &zwlr_layer_shell_v1_interface, 4);
+    default_global_create(display, &zwlr_layer_shell_v1_interface, 5);
     default_global_create(display, &ext_session_lock_manager_v1_interface, 1);
     default_global_create(display, &xdg_wm_dialog_v1_interface, 1);
 }

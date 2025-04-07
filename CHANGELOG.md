@@ -1,4 +1,6 @@
 # Changelog
+## [1.1.2] - 7 Apr 2025
+- Implementation of [set_exclusive_edge](https://wayland.app/protocols/wlr-layer-shell-unstable-v1#zwlr_layer_surface_v1:request:set_exclusive_edge)
 
 ## [Unreleased]
 ## [1.1.1] - 29 Mar 2025
