@@ -509,3 +509,9 @@ void layer_surface_install_hook(layer_surface_hook_callback_t callback) {
         );
     }
 }
+
+void layer_surface_set_size(struct layer_surface_t* self, uint32_t width, uint32_t height) { 
+    if (self->layer_surface)
+        zwlr_layer_surface_v1_set_size(self->layer_surface, width == 0 ? 1 : width, height == 0 ? 1 : height);
+    // layer_surface_needs_commit(self);
+}

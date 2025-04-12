@@ -337,6 +337,8 @@ GtkLayerShellKeyboardMode gtk_layer_get_keyboard_mode(GtkWindow* window);
 
 void gtk_layer_set_exclusive_edge(GtkWindow* window, GtkLayerShellEdge edge);
 
+void gtk_layer_set_size(GtkWindow* window, uint32_t width, uint32_t height);
+
 G_END_DECLS
 
 #endif // GTK_LAYER_SHELL_H

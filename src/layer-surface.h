@@ -76,6 +76,7 @@ void layer_surface_set_name_space(struct layer_surface_t* self, char const* name
 const char* layer_surface_get_namespace(struct layer_surface_t* self);
 
 // Can be set without remapping the surface
+void layer_surface_set_size(struct layer_surface_t* self, uint32_t width, uint32_t height);
 void layer_surface_set_layer(struct layer_surface_t* self, enum zwlr_layer_shell_v1_layer layer); // Remaps surface on old layer shell versions
 void layer_surface_set_anchor(struct layer_surface_t* self, struct geom_edges_t anchors); // anchor values are treated as booleans
 void layer_surface_set_margin(struct layer_surface_t* self, struct geom_edges_t margins);

@@ -419,3 +419,10 @@ GtkLayerShellKeyboardMode gtk_layer_get_keyboard_mode(GtkWindow* window) {
     // Our keyboard interactivity enum matches the layer shell one
     return (GtkLayerShellKeyboardMode)layer_surface->super.keyboard_mode;
 }
+
+GTK4_LAYER_SHELL_EXPORT
+void gtk_layer_set_size(GtkWindow* window, uint32_t width, uint32_t height) {
+    struct gtk_layer_surface_t* layer_surface = gtk_window_get_layer_surface_or_warn(window);
+    if (!layer_surface) return;
+    layer_surface_set_size(&layer_surface->super, width, height);
+}
